@@ -61,6 +61,19 @@ async function run() {
 
     })
 
+    app.patch('users/instructors/:id',async(req,res)=>{
+      const id=req.params.id;
+      const filter={_id:new ObjectId(id)};
+      const updateDoc = {
+        $set:{
+          role:'instructors'
+        },
+      };
+      const result=await usersCollection.updateOne(filter,updateDoc);
+      res.send(result);
+
+    })
+
     app.get('/classes',async(req,res)=>{
         const result=await classesCollection.find().toArray();
         res.send(result);
