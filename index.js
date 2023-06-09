@@ -48,8 +48,9 @@ async function run() {
     
     })
 
-    app.patch('users/admin/:id',async(req,res)=>{
+    app.patch('/users/admin/:id',async(req,res)=>{
       const id=req.params.id;
+      console.log(id)
       const filter={_id:new ObjectId(id)};
       const updateDoc = {
         $set:{
@@ -61,7 +62,7 @@ async function run() {
 
     })
 
-    app.patch('users/instructors/:id',async(req,res)=>{
+    app.patch('/users/instructors/:id',async(req,res)=>{
       const id=req.params.id;
       const filter={_id:new ObjectId(id)};
       const updateDoc = {
