@@ -81,6 +81,17 @@ async function run() {
       const result={admin:user?.role==='admin'}
       res.send(result)
     })
+   
+    app.get('/users/instructors/:email',verifyJWT, async(req,res)=>{
+      const email=req.params.email;
+      if(req.decoded.email !== email){
+        res.send({instructors:false})
+      }
+      const query={email:email}
+      const user=await usersCollection.findOne(query);
+      const result={instructors:user?.role==='instructors'}
+      res.send(result)
+    })
     
 
     app.patch('/users/admin/:id',async(req,res)=>{
