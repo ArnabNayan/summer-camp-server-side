@@ -44,7 +44,7 @@ async function run() {
     const usersCollection=client.db("sportsdb").collection("users");
     const classesCollection=client.db("sportsdb").collection("classes");
     const instructorsCollection=client.db("sportsdb").collection("instructors");
-    // const instructorsClassCollection=client.db("sportsdb").collection("instructorclass");
+    const instructorsClassCollection=client.db("sportsdb").collection("instructorclass");
 
     app.post('/jwt',(req,res)=>{
       const user=req.body;
@@ -142,24 +142,24 @@ async function run() {
     })
 
     //instructor class
-    // app.post('/instructorclass',async(req,res)=>{
-    //   const instructorclass=req.body;
-    //   console.log(instructorclass)
-    //   const result=await instructorsClassCollection.insertOne(instructorclass);
-    //   res.send(result);
+    app.post('/instructorclass',async(req,res)=>{
+      const instructorclass=req.body;
+      console.log(instructorclass)
+      const result=await instructorsClassCollection.insertOne(instructorclass);
+      res.send(result);
   
-    // })
+    })
 
     app.get('/classes',async(req,res)=>{
         const result=await classesCollection.find().toArray();
         res.send(result);
     })
 
-    app.post('/classes',verifyJWT, async(req,res)=>{
-      const newClass=req.body;
-      const result=await classesCollection.insertOne(newClass);
-      res.send(result)
-    })
+    // app.post('/classes',verifyJWT, async(req,res)=>{
+    //   const newClass=req.body;
+    //   const result=await classesCollection.insertOne(newClass);
+    //   res.send(result)
+    // })
     app.get('/instructors',async(req,res)=>{
         const result=await instructorsCollection.find().toArray();
         res.send(result);
