@@ -142,6 +142,7 @@ async function run() {
     })
 
     //instructor class
+  
     app.post('/instructorclass',async(req,res)=>{
       const instructorclass=req.body;
       console.log(instructorclass)
@@ -149,6 +150,11 @@ async function run() {
       res.send(result);
   
     })
+    app.get('/instructorclass',async(req,res)=>{
+      const result=await instructorsClassCollection.find().toArray();
+      res.send(result);
+  })
+
 
     app.get('/classes',async(req,res)=>{
         const result=await classesCollection.find().toArray();
