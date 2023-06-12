@@ -156,7 +156,21 @@ async function run() {
   const { id } = req.params;
   const { status } = req.body;
   
-  const result = await instructorsClassCollection.updateOne({ _id: ObjectId(id) }, { $set: { status } });
+  const result = await instructorsClassCollection.updateOne({ _id:new ObjectId(id) }, { $set: { status } });
+  res.send(result);
+});
+
+app.patch('/instructorclass/:id/approve', async (req, res) => {
+  const { id } = req.params;
+  
+  const result = await instructorsClassCollection.updateOne({ _id:new ObjectId(id) }, { $set: { status: 'approved' } });
+  res.send(result);
+});
+
+app.patch('/instructorclass/:id/deny', async (req, res) => {
+  const { id } = req.params;
+  
+  const result = await instructorsClassCollection.updateOne({ _id:new ObjectId(id) }, { $set: { status: 'denied' } });
   res.send(result);
 });
 
@@ -164,6 +178,8 @@ async function run() {
       const result = await instructorsClassCollection.find().toArray();
       res.send(result);
     })
+
+  
 
     app.get('/classes', async (req, res) => {
       const result = await classesCollection.find().toArray();
