@@ -45,7 +45,8 @@ async function run() {
     const classesCollection = client.db("sportsdb").collection("classes");
     const instructorsCollection = client.db("sportsdb").collection("instructors");
     const instructorsClassCollection = client.db("sportsdb").collection("instructorclass");
-
+    const selectClassCollection = client.db("sportsdb").collection("selectclass");
+  
     app.post('/jwt', (req, res) => {
       const user = req.body;
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '48h' })
@@ -174,17 +175,42 @@ app.patch('/instructorclass/:id/deny', async (req, res) => {
   res.send(result);
 });
 
-    // app.get('/instructorclass', async (req, res) => {
-    //   const result = await instructorsClassCollection.find().toArray();
-    //   res.send(result);
-    // })
+    app.get('/instructorclass', async (req, res) => {
+      const result = await instructorsClassCollection.find().toArray();
+      res.send(result);
+    })
 
   
 
-    app.get('/instructorclass', async (req, res) => {
-       const result = await instructorsClassCollection.find({ status: 'approved' }).toArray();
-      res.send(result);
-    })
+    // app.get('/instructorclass', async (req, res) => {
+    //    const result = await instructorsClassCollection.find({ status: 'approved' }).toArray();
+    //   res.send(result);
+    // })
+
+    //select class
+
+     app.get('/class', async(req,res)=>{
+    const email=req.query.email;
+    if(!email){
+      res.send([]);
+    }
+    // const decodedEmail=req.decoded.email;
+    // if(email !== decodedEmail){
+    //   return res.status(403).send({error:true,message:'forbidden access'})
+    // }
+    const query={email:email};
+    const result=await selectClassCollection.find(query).toArray();
+    res.send(result)
+   });
+
+       app.post('/class',async(req,res)=>{
+      const item=req.body;
+      console.log(item)
+      const result=await selectClassCollection.insertOne(item);
+      res.send(result)
+    }) 
+
+
     app.get('/classes', async (req, res) => {
        const result = await classesCollection.find().toArray();
       res.send(result);
