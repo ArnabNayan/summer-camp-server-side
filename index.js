@@ -174,15 +174,19 @@ app.patch('/instructorclass/:id/deny', async (req, res) => {
   res.send(result);
 });
 
-    app.get('/instructorclass', async (req, res) => {
-      const result = await instructorsClassCollection.find().toArray();
-      res.send(result);
-    })
+    // app.get('/instructorclass', async (req, res) => {
+    //   const result = await instructorsClassCollection.find().toArray();
+    //   res.send(result);
+    // })
 
   
 
-    app.get('/classes', async (req, res) => {
+    app.get('/instructorclass', async (req, res) => {
        const result = await instructorsClassCollection.find({ status: 'approved' }).toArray();
+      res.send(result);
+    })
+    app.get('/classes', async (req, res) => {
+       const result = await classesCollection.find().toArray();
       res.send(result);
     })
 
