@@ -182,7 +182,7 @@ app.patch('/instructorclass/:id/deny', async (req, res) => {
   
 
     app.get('/classes', async (req, res) => {
-      const result = await classesCollection.find().toArray();
+       const result = await instructorsClassCollection.find({ status: 'approved' }).toArray();
       res.send(result);
     })
 
