@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
+const stripe=require('stripe')(process.env.PAYMENT_SECRET_KEY) 
 const port = process.env.PORT || 5000;
 
 app.use(cors());
@@ -46,7 +47,7 @@ async function run() {
     const instructorsCollection = client.db("sportsdb").collection("instructors");
     const instructorsClassCollection = client.db("sportsdb").collection("instructorclass");
     const selectClassCollection = client.db("sportsdb").collection("selectclass");
-  
+    // const paymentCollection = client.db("sportsdb").collection("payments");
     app.post('/jwt', (req, res) => {
       const user = req.body;
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '48h' })
@@ -72,6 +73,7 @@ async function run() {
       }
       next();
     }
+
 
     //users api
     app.get('/users', verifyJWT, async (req, res) => {
@@ -210,6 +212,12 @@ app.patch('/instructorclass/:id/deny', async (req, res) => {
       res.send(result)
     }) 
 
+      app.delete('/class/:id',async(req,res)=>{
+      const id=req.params.id;
+      const query={_id:new ObjectId(id)};
+      const result=await selectClassCollection.deleteOne(query);
+      res.send(result);
+    })
 
     app.get('/classes', async (req, res) => {
        const result = await classesCollection.find().toArray();
@@ -225,6 +233,45 @@ app.patch('/instructorclass/:id/deny', async (req, res) => {
       const result = await instructorsCollection.find().toArray();
       res.send(result);
     })
+
+        //create payment intent
+    app.post('/create-payment-intent', verifyJWT, async (req, res) => {
+      const { price, email } = req.body;
+      const amount = parseInt(price * 100);
+    
+    
+      try {
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: amount,
+          currency: 'usd',
+          payment_method_types: ['card'],
+          receipt_email: email, // Provide the email address for billing details
+        });
+    
+        res.send({
+          clientSecret: paymentIntent.client_secret,
+        });
+      } catch (error) {
+        console.error('Error creating payment intent:', error);
+    
+        if (error.code === 'email_invalid') {
+          // Handle the specific error when the email is invalid
+          return res.status(400).send('Invalid email address');
+        }
+    
+        res.status(500).send('Error creating payment intent');
+      }
+    });
+    
+        // app.post('/payments',async(req,res)=>{
+        //   const payment = req.body;
+        //   const result=await paymentCollection.insertOne(payment)
+        //   res.send(result)
+        // })
+
+     
+
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
