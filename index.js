@@ -47,7 +47,7 @@ async function run() {
     const instructorsCollection = client.db("sportsdb").collection("instructors");
     const instructorsClassCollection = client.db("sportsdb").collection("instructorclass");
     const selectClassCollection = client.db("sportsdb").collection("selectclass");
-    // const paymentCollection = client.db("sportsdb").collection("payments");
+    const paymentCollection = client.db("sportsdb").collection("payments");
     app.post('/jwt', (req, res) => {
       const user = req.body;
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '48h' })
@@ -262,12 +262,21 @@ app.patch('/instructorclass/:id/deny', async (req, res) => {
         res.status(500).send('Error creating payment intent');
       }
     });
-    
-        // app.post('/payments',async(req,res)=>{
-        //   const payment = req.body;
-        //   const result=await paymentCollection.insertOne(payment)
-        //   res.send(result)
-        // })
+   
+    //payment
+        app.post('/payments',verifyJWT, async(req,res)=>{
+          const payment = req.body;
+          const insertResult=await paymentCollection.insertOne(payment)
+
+          
+          res.send({insertResult})
+        })
+
+        app.get("/payments", verifyJWT, async (req, res) => {
+  const payments = await paymentCollection.find().toArray();
+  res.send(payments);
+});
+
 
      
 
